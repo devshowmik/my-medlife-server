@@ -40,6 +40,22 @@ async function run() {
             res.send(blog)
 
         })
+        // update from database
+        app.patch('/blogs/:postId', async (req, res) => {
+            const id = req.params.postId;
+            const query = { _id: ObjectId(id) };
+            // get data from client side
+            const blog = req.body;
+            const updateInfo = {
+                $set: {
+                    title: blog.title,
+                    photo: blog.photo,
+                    description: blog.description
+                }
+            }
+            const updatePost = await blogCollection.updateOne(query, updateInfo);
+            res.send(updatePost);
+        })
         // delete from database
         app.delete('/blogs/:postId', async (req, res) => {
             const id = req.params.postId;
