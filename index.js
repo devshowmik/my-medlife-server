@@ -50,7 +50,7 @@ async function run() {
         //get single Blog post
         app.get('/blogs/:postId', async (req, res) => {
             const id = req.params.postId;
-            const query = { _id: ObjectId(id) }
+            const query = { _id: ObjectId(id) };
             const singlePost = await blogCollection.findOne(query);
             res.send(singlePost);
         })
