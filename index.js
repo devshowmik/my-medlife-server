@@ -3,6 +3,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const app = express();
 const corse = require('cors');
+const { query } = require('express');
 app.use(corse());
 app.use(express.json());
 
@@ -82,6 +83,46 @@ async function run() {
             const services = await cursor.toArray();
             res.send(services)
         })
+        // send single data to client side
+        app.get('/service/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await serviceCollection.findOne(query);
+            res.send(result)
+        })
+        // delete data from database
+        app.delete('/service/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await serviceCollection.deleteOne(query);
+            res.send(result)
+        })
+        //update service 
+        app.patch('/service/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const service = req.body;
+            updateService = {
+                $set: {
+                    title: service.title,
+                    price: service.price,
+                    photourl: service.photourl,
+                    galleryImages: service.galleryImages,
+                    description: service.description
+                }
+            };
+            const result = await serviceCollection.updateOne(query, updateService);
+            res.send(result)
+        })
+        // review
+        const reviewCCollection = client.db('vector-photography').collection('reviews');
+        // send review to database
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCCollection.insertOne(review);
+            res.send(result)
+        })
+        // send review to client side
 
     }
     finally {
