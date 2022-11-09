@@ -115,15 +115,35 @@ async function run() {
             res.send(result)
         })
         // review
-        const reviewCCollection = client.db('vector-photography').collection('reviews');
+        const reviewCollection = client.db('vector-photography').collection('reviews');
         // send review to database
         app.post('/reviews', async (req, res) => {
             const review = req.body;
-            const result = await reviewCCollection.insertOne(review);
+            const result = await reviewCollection.insertOne(review);
             res.send(result)
         })
         // send review to client side
+        app.get('/reviews', async (req, res) => {
+            const query = {};
+            const cursor = reviewCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+        // send review to client side
+        app.get('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { postId: id };
+            const filter = await reviewCollection.find(query).toArray();
+            res.send(filter)
+        })
+        //delete reviews
+        app.delete('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await reviewCollection.deleteOne(query);
+            res.send(result);
 
+        })
     }
     finally {
 
