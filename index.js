@@ -43,10 +43,16 @@ async function run() {
         // delete from database
         app.delete('/blogs/:postId', async (req, res) => {
             const id = req.params.postId;
-            console.log('trying to delete', id)
             const query = { _id: ObjectId(id) }
             const deletedPost = await blogCollection.deleteOne(query);
             res.send(deletedPost);
+        })
+        //get single Blog post
+        app.get('/blogs/:postId', async (req, res) => {
+            const id = req.params.postId;
+            const query = { _id: ObjectId(id) }
+            const singlePost = await blogCollection.findOne(query);
+            res.send(singlePost);
         })
     }
     finally {
