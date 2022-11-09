@@ -15,10 +15,6 @@ app.listen(Port, () => {
 app.get('/', (req, res) => {
     res.send('Server is runnig')
 })
-// database
-//user : vector-photography
-// password : hTMFqF7N65YXUWRe
-
 
 const uri = "mongodb+srv://vector-photography:hTMFqF7N65YXUWRe@users.95k0mgf.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -70,6 +66,23 @@ async function run() {
             const singlePost = await blogCollection.findOne(query);
             res.send(singlePost);
         })
+
+        // Service API
+        const serviceCollection = client.db('vector-photography').collection('services');
+        // send data to database
+        app.post('/services', async (req, res) => {
+            const service = req.body;
+            const result = await serviceCollection.insertOne(service);
+            res.send(result);
+        })
+        // send data to client side 
+        app.get('/services', async (req, res) => {
+            const query = {};
+            const cursor = serviceCollection.find(query);
+            const services = await cursor.toArray();
+            res.send(services)
+        })
+
     }
     finally {
 
