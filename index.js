@@ -3,7 +3,6 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const app = express();
 const corse = require('cors');
-const { query } = require('express');
 app.use(corse());
 app.use(express.json());
 
@@ -143,6 +142,28 @@ async function run() {
             const result = await reviewCollection.deleteOne(query);
             res.send(result);
 
+        })
+        //cart items
+        const cartCollection = client.db('vector-photography').collection('cart');
+        // send data to data base
+        app.post('/cart', async (req, res) => {
+            const cart = req.body;
+            const result = await cartCollection.insertOne(cart);
+            res.send(result)
+        })
+        //send data to client side
+        app.get('/cart', async (req, res) => {
+            const query = {};
+            const cursor = cartCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+        // delete cart data
+        app.delete('/cart/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await cartCollection.deleteOne(query);
+            res.send(result)
         })
     }
     finally {
