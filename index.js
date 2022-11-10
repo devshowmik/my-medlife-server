@@ -3,9 +3,12 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const app = express();
 const corse = require('cors');
+require('dotenv').config();
+var jwt = require('jsonwebtoken');
+//middleware
 app.use(corse());
 app.use(express.json());
-
+console
 const Port = process.env.Port || 5000;
 // Check Server port on server console
 app.listen(Port, () => {
@@ -13,7 +16,7 @@ app.listen(Port, () => {
 })
 // check server is running on cliend side
 app.get('/', (req, res) => {
-    res.send('Server is runnig')
+    res.send('Server is running')
 })
 
 const uri = "mongodb+srv://vector-photography:hTMFqF7N65YXUWRe@users.95k0mgf.mongodb.net/?retryWrites=true&w=majority";
@@ -153,7 +156,12 @@ async function run() {
         })
         //send data to client side
         app.get('/cart', async (req, res) => {
-            const query = {};
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
             const cursor = cartCollection.find(query);
             const result = await cursor.toArray();
             res.send(result)
@@ -188,9 +196,21 @@ async function run() {
             const result = await orderCollection.findOne(query);
             res.send(result)
         })
-
+        //send data to client side
+        app.get('/orders', async (req, res) => {
+            const query = {};
+            const cursor = orderCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+        // app.post('/jwt', (req, res) => {
+        //     const user = req.body;
+        //     const token = jwt.sign(user, 'hgfujfhgdrb775fhgf', { expiresIn: '1h' })
+        //     res.send({ token })
+        // })
     }
     finally {
+
 
     }
 }
