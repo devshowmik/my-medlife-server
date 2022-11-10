@@ -165,6 +165,30 @@ async function run() {
             const result = await cartCollection.deleteOne(query);
             res.send(result)
         })
+        //checkout 
+        const orderCollection = client.db('vector-photography').collection('orders');
+        // send data to data base
+        app.post('/checkout', async (req, res) => {
+            const checkout = req.body;
+            const result = await orderCollection.insertOne(checkout);
+            res.send(result)
+        })
+        //send data to client side
+        app.get('/orders', async (req, res) => {
+            const query = {};
+            const cursor = orderCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
+        // send single data to client side
+        app.get('/order/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.findOne(query);
+            res.send(result)
+        })
+
     }
     finally {
 
